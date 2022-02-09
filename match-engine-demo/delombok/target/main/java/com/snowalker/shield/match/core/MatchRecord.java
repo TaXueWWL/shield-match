@@ -30,7 +30,6 @@ public class MatchRecord {
     }
 
 
-    //<editor-fold defaultstate="collapsed" desc="delombok">
     @SuppressWarnings("all")
     public static class MatchRecordBuilder {
         @SuppressWarnings("all")
@@ -217,5 +216,4 @@ public class MatchRecord {
         this.takerOrder = takerOrder;
         this.makerOrder = makerOrder;
     }
-    //</editor-fold>
 }

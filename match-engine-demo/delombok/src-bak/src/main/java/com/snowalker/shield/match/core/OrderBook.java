@@ -1,6 +1,7 @@
 package com.snowalker.shield.match.core;
 
 import lombok.*;
+
 import java.util.*;
 
 /**
@@ -16,6 +17,10 @@ import java.util.*;
  *      所以我们定义 OrderBook 的结构就是⼀个 TreeMap<OrderKey, Order> ，它的排序根据 OrderKey 决定。
  * @Since 2022/1/20 10:07 下午
  */
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
+@ToString
+@Builder
 public class OrderBook {
     /**
      * 买卖方向
@@ -26,8 +31,12 @@ public class OrderBook {
      */
     private final TreeMap<OrderKey, MatchOrder> book;
 
+
     public static OrderBook newInstance(Direction direction) {
-        OrderBook orderBook = OrderBook.builder().direction(direction).book(new TreeMap<>(direction == Direction.BUY ? SORT_BUY : SORT_SELL)).build();
+        OrderBook orderBook = OrderBook.builder()
+                .direction(direction)
+                .book(new TreeMap<>(direction == Direction.BUY ? SORT_BUY : SORT_SELL))
+                .build();
         return orderBook;
     }
 
@@ -40,6 +49,7 @@ public class OrderBook {
      *      同价时间早在前  根据时间定序即可，即便是数量相同，也有先后的seq
      */
     private static final Comparator<OrderKey> SORT_SELL = Comparator.comparing(OrderKey::getPrice).thenComparingLong(OrderKey::getSequenceId);
+
     private static final Comparator<OrderKey> SORT_BUY = (o1, o2) -> {
         // 价格高优先
         int cmp = o2.getPrice().compareTo(o1.getPrice());
@@ -86,76 +96,4 @@ public class OrderBook {
         return String.join("\n", orders);
     }
 
-
-    //<editor-fold defaultstate="collapsed" desc="delombok">
-    @SuppressWarnings("all")
-    public static class OrderBookBuilder {
-        @SuppressWarnings("all")
-        private Direction direction;
-        @SuppressWarnings("all")
-        private TreeMap<OrderKey, MatchOrder> book;
-
-        @SuppressWarnings("all")
-        OrderBookBuilder() {
-        }
-
-        /**
-         * 买卖方向
-         * @return {@code this}.
-         */
-        @SuppressWarnings("all")
-        public OrderBook.OrderBookBuilder direction(final Direction direction) {
-            this.direction = direction;
-            return this;
-        }
-
-        /**
-         * 买卖方向深度排序树
-         * @return {@code this}.
-         */
-        @SuppressWarnings("all")
-        public OrderBook.OrderBookBuilder book(final TreeMap<OrderKey, MatchOrder> book) {
-            this.book = book;
-            return this;
-        }
-
-        @SuppressWarnings("all")
-        public OrderBook build() {
-            return new OrderBook(this.direction, this.book);
-        }
-
-        @Override
-        @SuppressWarnings("all")
-        public String toString() {
-            return "OrderBook.OrderBookBuilder(direction=" + this.direction + ", book=" + this.book + ")";
-        }
-    }
-
-    @SuppressWarnings("all")
-    public static OrderBook.OrderBookBuilder builder() {
-        return new OrderBook.OrderBookBuilder();
-    }
-
-    @SuppressWarnings("all")
-    private OrderBook(final Direction direction, final TreeMap<OrderKey, MatchOrder> book) {
-        this.direction = direction;
-        this.book = book;
-    }
-
-    /**
-     * 买卖方向
-     */
-    @SuppressWarnings("all")
-    public Direction getDirection() {
-        return this.direction;
-    }
-
-    /**
-     * 买卖方向深度排序树
-     */
-    @SuppressWarnings("all")
-    public TreeMap<OrderKey, MatchOrder> getBook() {
-        return this.book;
-    }
-    //</editor-fold>
 }

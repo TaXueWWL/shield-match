@@ -32,7 +32,6 @@ public class MatchOrder {
         return String.format("%.2f %.2f %s seq=%s", this.price, this.amount, this.direction, this.sequenceId);
     }
 
-    //<editor-fold defaultstate="collapsed" desc="delombok">
     @SuppressWarnings("all")
     public MatchOrder(final long sequenceId, final Direction direction, final BigDecimal price, final BigDecimal amount) {
         this.sequenceId = sequenceId;
@@ -121,5 +120,4 @@ public class MatchOrder {
     public void setAmount(final BigDecimal amount) {
         this.amount = amount;
     }
-    //</editor-fold>
 }

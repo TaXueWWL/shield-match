@@ -36,7 +36,6 @@ public class MatchResult {
         return matchRecords.size() + " matched: " + String.join(", ", this.matchRecords.stream().map(MatchRecord::toString).toArray(String[]::new));
     }
 
-    //<editor-fold defaultstate="collapsed" desc="delombok">
     @SuppressWarnings("all")
     MatchResult(final MatchOrder takerOrder) {
         this.takerOrder = takerOrder;
@@ -91,5 +90,4 @@ public class MatchResult {
     public List<MatchRecord> getMatchRecords() {
         return this.matchRecords;
     }
-    //</editor-fold>
 }

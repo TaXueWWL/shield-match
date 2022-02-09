@@ -38,7 +38,6 @@ public class OrderKey {
         return Objects.hash(sequenceId, price);
     }
 
-    //<editor-fold defaultstate="collapsed" desc="delombok">
     @SuppressWarnings("all")
     public OrderKey(final long sequenceId, final BigDecimal price) {
         this.sequenceId = sequenceId;
@@ -50,5 +49,4 @@ public class OrderKey {
     public String toString() {
         return "OrderKey(sequenceId=" + this.getSequenceId() + ", price=" + this.getPrice() + ")";
     }
-    //</editor-fold>
 }

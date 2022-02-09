@@ -110,7 +110,6 @@ public class MatcherEngine {
         return "\n-----------卖盘------------\n价格     数量  方向  序列\n" + this.sellBook + line + "最新成交价:" + this.marketPrice + "\n-----------买盘------------\n价格     数量  方向  序列\n" + this.buyBook + line;
     }
 
-    //<editor-fold defaultstate="collapsed" desc="delombok">
     @SuppressWarnings("all")
     MatcherEngine(final BigDecimal marketPrice) {
         this.marketPrice = marketPrice;
@@ -152,5 +151,4 @@ public class MatcherEngine {
     public static MatcherEngine.MatcherEngineBuilder builder() {
         return new MatcherEngine.MatcherEngineBuilder();
     }
-    //</editor-fold>
 }

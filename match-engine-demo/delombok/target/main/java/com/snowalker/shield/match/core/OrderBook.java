@@ -87,7 +87,6 @@ public class OrderBook {
     }
 
 
-    //<editor-fold defaultstate="collapsed" desc="delombok">
     @SuppressWarnings("all")
     public static class OrderBookBuilder {
         @SuppressWarnings("all")
@@ -157,5 +156,4 @@ public class OrderBook {
     public TreeMap<OrderKey, MatchOrder> getBook() {
         return this.book;
     }
-    //</editor-fold>
 }

@@ -1,5 +1,10 @@
 package com.snowalker.shield.match.core;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -9,7 +14,12 @@ import java.util.Objects;
  * @description: TODO
  * @Since 2022/1/20 10:04 下午
  */
+@AllArgsConstructor
+@EqualsAndHashCode
+@ToString
+@Getter
 public class OrderKey {
+
     private final long sequenceId;
     private final BigDecimal price;
 
@@ -20,6 +30,7 @@ public class OrderKey {
     public BigDecimal getPrice() {
         return price;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -38,17 +49,4 @@ public class OrderKey {
         return Objects.hash(sequenceId, price);
     }
 
-    //<editor-fold defaultstate="collapsed" desc="delombok">
-    @SuppressWarnings("all")
-    public OrderKey(final long sequenceId, final BigDecimal price) {
-        this.sequenceId = sequenceId;
-        this.price = price;
-    }
-
-    @Override
-    @SuppressWarnings("all")
-    public String toString() {
-        return "OrderKey(sequenceId=" + this.getSequenceId() + ", price=" + this.getPrice() + ")";
-    }
-    //</editor-fold>
 }

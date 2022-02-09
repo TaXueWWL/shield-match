@@ -4,6 +4,8 @@ import com.snowalker.shield.match.core.Direction;
 import com.snowalker.shield.match.core.MatchOrder;
 import com.snowalker.shield.match.core.MatchResult;
 import com.snowalker.shield.match.core.OrderBook;
+import lombok.Builder;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -18,7 +20,9 @@ import java.util.Objects;
  *
  * @Since 2022/1/20 11:13 下午
  */
+@Builder
 public class MatcherEngine {
+
     /**
      * 买盘
      */
@@ -34,14 +38,14 @@ public class MatcherEngine {
 
     public MatchResult matchProcessor(MatchOrder order) {
         switch (order.getDirection()) {
-        case SELL: 
-            // 卖单与buyBook匹配，最后放入sellBook
-            return process(order, this.buyBook, this.sellBook);
-        case BUY: 
-            // 买单与sellBook匹配，最后放入buyBook
-            return process(order, this.sellBook, this.buyBook);
-        default: 
-            throw new IllegalArgumentException("Wrong Direction!");
+            case SELL:
+                // 卖单与buyBook匹配，最后放入sellBook
+                return process(order, this.buyBook, this.sellBook);
+            case BUY:
+                // 买单与sellBook匹配，最后放入buyBook
+                return process(order, this.sellBook, this.buyBook);
+            default:
+                throw new IllegalArgumentException("Wrong Direction!");
         }
     }
 
@@ -54,43 +58,55 @@ public class MatcherEngine {
      * @return 成交结果
      */
     MatchResult process(MatchOrder takerOrder, OrderBook makerBook, OrderBook anotherBook) {
+
         MatchResult matchResult = MatchResult.builder().build();
         while (true) {
+
             MatchOrder makerOrder = makerBook.getFirst();
             if (Objects.isNull(makerOrder)) {
                 // 对手盘不存在订单
                 break;
             }
+
             if (takerOrder.getDirection() == Direction.BUY && takerOrder.getPrice().compareTo(makerOrder.getPrice()) < 0) {
                 // 当前为买单 且当前买单价格小于对手方卖单价格，无法成交（当前买方吃单比对手卖盘卖一价低）
                 break;
             }
+
             if (takerOrder.getDirection() == Direction.SELL && takerOrder.getPrice().compareTo(makerOrder.getPrice()) > 0) {
                 // 当前为卖单 且当前卖单价格大于对手方买单价格，无法成交（当前卖方吃单比对手买盘买一价高）
                 break;
             }
+
             // 以maker价格成交 最新成交价为当前挂单价格
             this.marketPrice = makerOrder.getPrice();
+
             // 成交数量为双方的较小值
             BigDecimal matchedAmount = takerOrder.getAmount().min(makerOrder.getAmount());
+
             // 成交记录
             matchResult.add(makerOrder.getPrice(), matchedAmount, makerOrder);
+
             // 更新成交之后的订单数量 :taker挂单数量-已成交量  maker挂单数量-已成交量
             takerOrder.setAmount(takerOrder.getAmount().subtract(matchedAmount));
             makerOrder.setAmount(makerOrder.getAmount().subtract(matchedAmount));
+
             // 对手盘完全成交之后 从对应的买卖深度删除
             if (makerOrder.getAmount().signum() == 0) {
                 makerBook.remove(makerOrder);
             }
+
             // Taker订单完全成交之后 退出循环(相当于)
             if (takerOrder.getAmount().signum() == 0) {
                 break;
             }
         }
+
         // Taker订单未完全成交时 放入深度
         if (takerOrder.getAmount().signum() > 0) {
             anotherBook.add(takerOrder);
         }
+
         return matchResult;
     }
 
@@ -107,50 +123,11 @@ public class MatcherEngine {
     @Override
     public String toString() {
         String line = "\n-------------------------\n";
-        return "\n-----------卖盘------------\n价格     数量  方向  序列\n" + this.sellBook + line + "最新成交价:" + this.marketPrice + "\n-----------买盘------------\n价格     数量  方向  序列\n" + this.buyBook + line;
+        return "\n-----------卖盘------------\n" +
+                "价格     数量  方向  序列\n"+
+                this.sellBook + line + "最新成交价:" + this.marketPrice +
+                "\n-----------买盘------------\n" +
+                "价格     数量  方向  序列\n"+
+                this.buyBook + line;
     }
-
-    //<editor-fold defaultstate="collapsed" desc="delombok">
-    @SuppressWarnings("all")
-    MatcherEngine(final BigDecimal marketPrice) {
-        this.marketPrice = marketPrice;
-    }
-
-
-    @SuppressWarnings("all")
-    public static class MatcherEngineBuilder {
-        @SuppressWarnings("all")
-        private BigDecimal marketPrice;
-
-        @SuppressWarnings("all")
-        MatcherEngineBuilder() {
-        }
-
-        /**
-         * 最新成交价
-         * @return {@code this}.
-         */
-        @SuppressWarnings("all")
-        public MatcherEngine.MatcherEngineBuilder marketPrice(final BigDecimal marketPrice) {
-            this.marketPrice = marketPrice;
-            return this;
-        }
-
-        @SuppressWarnings("all")
-        public MatcherEngine build() {
-            return new MatcherEngine(this.marketPrice);
-        }
-
-        @Override
-        @SuppressWarnings("all")
-        public String toString() {
-            return "MatcherEngine.MatcherEngineBuilder(marketPrice=" + this.marketPrice + ")";
-        }
-    }
-
-    @SuppressWarnings("all")
-    public static MatcherEngine.MatcherEngineBuilder builder() {
-        return new MatcherEngine.MatcherEngineBuilder();
-    }
-    //</editor-fold>
 }
